@@ -337,3 +337,5 @@ $RECYCLE.BIN/
 # cert
 *.p12
 *.p8
+# Personal code signing (see Signing.xcconfig)
+Local.xcconfig
