@@ -163,7 +163,6 @@ struct Trigger: Identifiable, Codable, Hashable {
         Trigger(keepDisplayOn: true, condition: .apps([
             AppRef(bundleID: "us.zoom.xos", name: "Zoom"),
             AppRef(bundleID: "com.microsoft.teams2", name: "Teams"),
-            AppRef(bundleID: "com.microsoft.teams", name: "Teams"),
         ])),
         Trigger(condition: .externalDisplay(display: nil)),
         Trigger(enabled: false, condition: .power(onCharger: true)),
