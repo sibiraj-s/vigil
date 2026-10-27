@@ -1,5 +1,0 @@
----
-'vigil': major
----
-
-First release.
