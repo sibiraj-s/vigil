@@ -184,6 +184,7 @@ private struct GeneralPane: View {
     @Environment(AwakeController.self) private var awake
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
     @State private var loginError: String?
+    @Bindable private var updater = Updater.shared
 
     var body: some View {
         @Bindable var prefs = awake.prefs
@@ -209,6 +210,18 @@ private struct GeneralPane: View {
                 CardDivider()
                 CardRow(title: "Let the display sleep", subtitle: "During manual sessions, keep the Mac awake but let the screen turn off and the screen saver start.") {
                     Toggle("Let the display sleep", isOn: $prefs.letDisplaySleep).labelsHidden()
+                }
+                CardDivider()
+                // Shown, but off, in builds that can't update, so the layout can be checked in Debug.
+                CardRow(
+                    title: "Check for updates automatically",
+                    subtitle: updater.isEnabled
+                        ? "Look for a new version once a day and offer to install it."
+                        : "Not available in this build."
+                ) {
+                    Toggle("Check for updates automatically", isOn: updater.isEnabled ? $updater.automaticallyChecks : .constant(false))
+                        .labelsHidden()
+                        .disabled(!updater.isEnabled)
                 }
             }
         }
@@ -272,7 +285,7 @@ private struct PowerPane: View {
 
 
 private struct AboutPane: View {
-    @Bindable private var updater = Updater.shared
+    private let updater = Updater.shared
 
     var body: some View {
         VStack(spacing: 12) {
@@ -288,10 +301,6 @@ private struct AboutPane: View {
                 .buttonStyle(OutlineButtonStyle())
                 .disabled(updater.isEnabled && !updater.canCheck)
                 .padding(.top, 8)
-            if updater.isEnabled {
-                Toggle("Check for updates automatically", isOn: $updater.automaticallyChecks)
-                    .font(.system(size: 12))
-            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
