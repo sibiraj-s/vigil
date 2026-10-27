@@ -1,5 +1,11 @@
 # vigil
 
+## 1.0.1
+
+### Patch Changes
+
+- 003f746: Add "Check for updates automatically" setting in Settings → General.
+
 ## 1.0.0
 
 ### Major Changes

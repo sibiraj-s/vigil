@@ -1,6 +1,6 @@
 {
   "name": "vigil",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Release tooling for Vigil (Changesets)",
   "license": "MIT",
