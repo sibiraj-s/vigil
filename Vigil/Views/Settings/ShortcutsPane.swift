@@ -27,11 +27,9 @@ struct ShortcutsPane: View {
                         .frame(maxWidth: .infinity)
                         .padding(20)
                 }
-                ForEach($prefs.shortcuts) { $shortcut in
-                    ShortcutRow(shortcut: $shortcut, problem: problem(for: shortcut)) {
-                        // Read the id first: reading the binding inside removeAll overlaps the array mutation.
-                        let id = shortcut.id
-                        prefs.shortcuts.removeAll { $0.id == id }
+                ForEach(prefs.shortcuts) { shortcut in
+                    ShortcutRow(shortcut: binding(for: shortcut), problem: problem(for: shortcut)) {
+                        prefs.shortcuts.removeAll { $0.id == shortcut.id }
                     }
                     if shortcut.id != prefs.shortcuts.last?.id { CardDivider() }
                 }
@@ -42,6 +40,18 @@ struct ShortcutsPane: View {
                 .foregroundStyle(Theme.textSecondary)
         }
         .onChange(of: prefs.shortcuts) { awake.registerHotKeys() }
+    }
+
+    /// Looks the row up by id. `ForEach($array)` bindings hold an index, which a removed row's
+    /// views still read while disappearing, trapping with "Index out of range".
+    private func binding(for shortcut: Shortcut) -> Binding<Shortcut> {
+        let prefs = awake.prefs
+        return Binding {
+            prefs.shortcuts.first { $0.id == shortcut.id } ?? shortcut
+        } set: { newValue in
+            guard let index = prefs.shortcuts.firstIndex(where: { $0.id == shortcut.id }) else { return }
+            prefs.shortcuts[index] = newValue
+        }
     }
 
     /// The first preset without a shortcut, so new rows start somewhere useful.

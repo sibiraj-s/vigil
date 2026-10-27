@@ -1,6 +1,23 @@
 import SwiftUI
 
-@main struct VigilApp: App {
+@main
+enum Launcher {
+    static func main() {
+        // Unit tests run inside the app. Start an empty one for them, so a test run never
+        // holds the Mac awake, registers shortcuts or checks for updates.
+        if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil || NSClassFromString("XCTestCase") != nil {
+            TestHostApp.main()
+        } else {
+            VigilApp.main()
+        }
+    }
+}
+
+private struct TestHostApp: App {
+    var body: some Scene { Settings { EmptyView() } }
+}
+
+struct VigilApp: App {
     @State private var awake: AwakeController
 
     init() {

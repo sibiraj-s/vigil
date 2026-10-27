@@ -16,7 +16,7 @@
 #   NOTARY_ISSUER_ID
 #   SPARKLE_PUBLIC_KEY   EdDSA public key that the app verifies updates with
 #   SPARKLE_PRIVATE_KEY  matching private key used to sign the DMG; read from the keychain
-#                        (Sparkle's generate_keys) when unset
+#                        (Sparkle's generate_keys --account vigil) when unset
 set -euo pipefail
 cd "$(dirname "$0")/.."
 if [[ -f .env ]]; then
@@ -179,11 +179,16 @@ if [[ -n "$team" ]]; then
     if [[ -n "${SPARKLE_PRIVATE_KEY:-}" ]]; then
         signature="$("$sign_update" -p --ed-key-file - "$dmg" <<<"$SPARKLE_PRIVATE_KEY")"
     else
-        signature="$("$sign_update" -p "$dmg")"
+        # Vigil's own key, not the default account, which may hold another app's.
+        signature="$("$sign_update" --account vigil -p "$dmg")"
     fi
-    # This version's CHANGELOG.md section, without the commit hashes Changesets adds.
-    notes="$(awk -v heading="## $version" '$0 == heading { found = 1; next } found && /^## / { exit } found' CHANGELOG.md |
-        sed -E 's/^([-*]) [0-9a-f]{7,40}: /\1 /')"
+    # This version's CHANGELOG.md section, without the commit hashes Changesets adds. A local
+    # build before the first release has no changelog yet.
+    notes=""
+    if [[ -f CHANGELOG.md ]]; then
+        notes="$(awk -v heading="## $version" '$0 == heading { found = 1; next } found && /^## / { exit } found' CHANGELOG.md |
+            sed -E 's/^([-*]) [0-9a-f]{7,40}: /\1 /')"
+    fi
     # "]]>" would end the CDATA section early; split it across two sections.
     notes="${notes//]]>/]]]]><![CDATA[>}"
     min_system="$(defaults read "$plist" LSMinimumSystemVersion)"

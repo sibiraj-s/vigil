@@ -26,7 +26,8 @@ Brewfile.lock.json
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 
 # Thumbnails
@@ -332,3 +333,7 @@ $RECYCLE.BIN/
 
 # and uncomment the following lines
 # .pnp.*
+
+# cert
+*.p12
+*.p8

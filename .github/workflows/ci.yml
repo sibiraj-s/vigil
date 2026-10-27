@@ -12,8 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build
+  build-and-test:
+    name: Build and test
     runs-on: xcode-27
     timeout-minutes: 30
     env:
@@ -28,8 +28,8 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
-      - name: Build (Debug)
-        run: set -o pipefail && $XCODEBUILD build 2>&1 | xcbeautify --renderer github-actions
+      - name: Test
+        run: set -o pipefail && $XCODEBUILD test 2>&1 | xcbeautify --renderer github-actions
 
       - name: Build (Release)
         run: set -o pipefail && $XCODEBUILD -configuration Release build 2>&1 | xcbeautify --renderer github-actions
