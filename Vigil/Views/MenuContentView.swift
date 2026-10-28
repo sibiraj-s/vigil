@@ -5,6 +5,7 @@ import SwiftUI
 struct MenuContentView: View {
     @Environment(AwakeController.self) private var awake
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.dismiss) private var dismiss
     @State private var page = Page.main
 
     enum Page {
@@ -95,8 +96,17 @@ struct MenuContentView: View {
 
     private func showSettings(_ pane: SettingsPane?) {
         if let pane { awake.settingsPane = pane }
-        NSApp.activate()
+        // Close the panel first; it would otherwise stay open over the settings window.
+        dismiss()
         openWindow(id: SettingsView.windowID)
+        NSApp.activate()
+        // Activation is only a request and can lose to the frontmost app, so raise the window
+        // explicitly once it exists.
+        DispatchQueue.main.async {
+            guard let window = NSApp.windows.first(where: { $0.identifier?.rawValue.hasPrefix(SettingsView.windowID) == true }) else { return }
+            window.makeKeyAndOrderFront(nil)
+            window.orderFrontRegardless()
+        }
     }
 }
 
