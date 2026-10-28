@@ -78,6 +78,7 @@ struct MenuContentView: View {
         .keyboardShortcut(",", modifiers: .command)
 
         Button {
+            dismiss()
             Updater.shared.checkNow()
         } label: {
             MenuRowLabel("Check for Updates…") { EmptyView() }
