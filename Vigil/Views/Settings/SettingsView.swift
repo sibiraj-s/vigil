@@ -212,6 +212,14 @@ private struct GeneralPane: View {
                     Toggle("Let the display sleep", isOn: $prefs.letDisplaySleep).labelsHidden()
                 }
                 CardDivider()
+                CardRow(title: "End session stops", subtitle: "Whether ending a session also pauses triggers that are keeping the Mac awake.") {
+                    Picker("End session stops", selection: $prefs.endBehavior) {
+                        ForEach(EndBehavior.allCases) { Text($0.label).tag($0) }
+                    }
+                    .labelsHidden()
+                    .fixedSize()
+                }
+                CardDivider()
                 // Shown, but off, in builds that can't update, so the layout can be checked in Debug.
                 CardRow(
                     title: "Check for updates automatically",

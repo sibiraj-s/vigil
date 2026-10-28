@@ -25,6 +25,7 @@ struct PreferencesTests {
         #expect(prefs.batteryGuardEnabled)
         #expect(prefs.batteryGuardThreshold == 20)
         #expect(prefs.lastPreset == .hour1)
+        #expect(prefs.endBehavior == .sessionOnly)
     }
 
     @Test func changesSurviveARelaunch() {
@@ -33,12 +34,14 @@ struct PreferencesTests {
         prefs.shortcuts = [Shortcut(preset: .hours5)]
         prefs.triggers = [Trigger(condition: .wifi(ssid: "Home"))]
         prefs.lastPreset = .minutes30
+        prefs.endBehavior = .everything
         prefs.lastApp = AppRef(bundleID: "com.apple.Safari", name: "Safari")
 
         let reloaded = Preferences(defaults: defaults)
         #expect(reloaded.shortcuts == prefs.shortcuts)
         #expect(reloaded.triggers == prefs.triggers)
         #expect(reloaded.lastPreset == .minutes30)
+        #expect(reloaded.endBehavior == .everything)
         #expect(reloaded.lastApp == prefs.lastApp)
     }
 

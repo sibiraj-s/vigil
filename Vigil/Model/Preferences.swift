@@ -15,6 +15,7 @@ final class Preferences {
         static let triggers = "triggers"
         static let appearance = "appearance"
         static let shortcuts = "shortcuts"
+        static let endBehavior = "endBehavior"
     }
 
     @ObservationIgnored private let defaults: UserDefaults
@@ -53,6 +54,10 @@ final class Preferences {
         didSet { defaults.set(appearance.rawValue, forKey: Key.appearance) }
     }
 
+    var endBehavior: EndBehavior {
+        didSet { defaults.set(endBehavior.rawValue, forKey: Key.endBehavior) }
+    }
+
     var shortcuts: [Shortcut] {
         didSet { save(shortcuts, forKey: Key.shortcuts) }
     }
@@ -77,6 +82,7 @@ final class Preferences {
             ?? Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: .now) ?? .now
         lastApp = Self.load(AppRef.self, from: defaults, forKey: Key.lastApp)
         appearance = defaults.string(forKey: Key.appearance).flatMap(AppearanceMode.init) ?? .system
+        endBehavior = defaults.string(forKey: Key.endBehavior).flatMap(EndBehavior.init) ?? .sessionOnly
         // Decode one by one so an entry of a removed kind is dropped instead of resetting the list.
         shortcuts = Self.load([Lossy<Shortcut>].self, from: defaults, forKey: Key.shortcuts)?.compactMap(\.value)
             ?? Shortcut.defaults
@@ -92,6 +98,23 @@ final class Preferences {
     private static func load<T: Decodable>(_ type: T.Type, from defaults: UserDefaults, forKey key: String) -> T? {
         guard let data = defaults.data(forKey: key) else { return nil }
         return try? JSONDecoder().decode(type, from: data)
+    }
+}
+
+/// What "End session" stops while a manual session and triggers are both keeping the Mac awake.
+enum EndBehavior: String, CaseIterable, Identifiable {
+    /// Ends the session and lets triggers keep the Mac awake; ending again pauses them.
+    case sessionOnly
+    /// Ends the session and pauses triggers at once.
+    case everything
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .sessionOnly: "Only the session"
+        case .everything: "Session and triggers"
+        }
     }
 }
 

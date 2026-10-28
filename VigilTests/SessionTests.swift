@@ -34,3 +34,71 @@ struct SessionTests {
         #expect(Preset.allCases.filter(\.needsInput) == [.untilTime, .whileApp])
     }
 }
+
+/// End and resume behaviour with a trigger that always holds.
+struct EndSessionTests {
+    private let suite = "VigilTests.\(UUID().uuidString)"
+    private let awake: AwakeController
+
+    init() {
+        let prefs = Preferences(defaults: UserDefaults(suiteName: suite)!)
+        prefs.batteryGuardEnabled = false
+        var always = Trigger.Schedule()
+        always.weekdays = Set(1...7)
+        always.start = 0
+        always.end = 24 * 60
+        prefs.triggers = [Trigger(condition: .schedule(always))]
+        awake = AwakeController(prefs: prefs)
+        awake.evaluate()
+    }
+
+    private func cleanUp() {
+        UserDefaults().removePersistentDomain(forName: suite)
+    }
+
+    @Test func endingASessionLeavesTriggersRunning() {
+        defer { cleanUp() }
+        awake.start(.indefinitely)
+        awake.end()
+        #expect(awake.session == nil)
+        #expect(awake.activeTriggers.count == 1)
+        #expect(awake.isAwake)
+    }
+
+    @Test func endingEverythingPausesTriggersWithTheSession() {
+        defer { cleanUp() }
+        awake.prefs.endBehavior = .everything
+        awake.start(.indefinitely)
+        awake.end()
+        #expect(awake.session == nil)
+        #expect(!awake.isAwake)
+        #expect(awake.pausedTriggers.count == 1)
+    }
+
+    @Test func endingWithNoSessionPausesTriggers() {
+        defer { cleanUp() }
+        awake.start(.indefinitely)
+        awake.end()
+        awake.end()
+        #expect(!awake.isAwake)
+        #expect(awake.pausedTriggers.count == 1)
+    }
+
+    @Test func toggleResumesPausedTriggers() {
+        defer { cleanUp() }
+        awake.end()
+        #expect(!awake.isAwake)
+        awake.toggle(nil)
+        #expect(awake.session == nil)
+        #expect(awake.activeTriggers.count == 1)
+    }
+
+    @Test func startingASessionUnpausesTriggers() {
+        defer { cleanUp() }
+        awake.end()
+        awake.start(.indefinitely)
+        awake.end()
+        #expect(awake.activeTriggers.count == 1)
+        #expect(awake.pausedTriggers.isEmpty)
+    }
+}

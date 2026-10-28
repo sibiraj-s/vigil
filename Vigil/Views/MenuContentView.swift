@@ -122,13 +122,18 @@ private struct StatusHeader: View {
                 }
             }
 
-            Button(awake.isAwake ? "End session" : "Start session") {
+            Button(buttonTitle) {
                 awake.toggle(nil)
             }
             .buttonStyle(ProminentStyle(filled: !awake.isAwake))
             .disabled(!awake.isAwake && awake.batteryGuardTripped)
         }
         .padding(EdgeInsets(top: 10, leading: 11, bottom: 12, trailing: 11))
+    }
+
+    private var buttonTitle: String {
+        if awake.isAwake { return "End session" }
+        return awake.pausedTriggers.isEmpty ? "Start session" : "Resume trigger"
     }
 
     private var title: String {
@@ -158,6 +163,9 @@ private struct StatusHeader: View {
         }
         if awake.batteryGuardTripped {
             return "Paused · battery below \(awake.prefs.batteryGuardThreshold)%"
+        }
+        if let trigger = awake.pausedTriggers.first {
+            return "Paused · \(trigger.shortTitle)"
         }
         return "Following your Energy settings"
     }
