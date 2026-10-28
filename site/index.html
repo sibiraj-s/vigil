@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vigil — keep your Mac awake</title>
+    <meta
+      name="description"
+      content="Vigil is a free, open-source menu bar app that keeps your Mac awake: for a set time, until a time of day, or automatically while a trigger holds."
+    />
+    <meta name="color-scheme" content="light" />
+    <meta property="og:title" content="Vigil — Your Mac stays awake." />
+    <meta property="og:description" content="A free, open-source menu bar app for macOS that keeps your Mac awake." />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="./favicon.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Hides the text in #root before the first paint when JavaScript runs, so it doesn't flash
+         before the app replaces it; readers without JavaScript still get it. -->
+    <script>
+      document.documentElement.classList.add('js')
+    </script>
+    <style>
+      .js .no-js-only {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- What the page says, for readers that don't run JavaScript (search engines, link
+         checkers); the app replaces it when it loads. -->
+    <div id="root">
+      <main class="no-js-only mx-auto max-w-180 px-6 py-16 font-sans text-[15px] leading-relaxed text-text2">
+        <h1 class="text-[40px] font-extrabold text-text">Vigil — keep your Mac awake</h1>
+        <p class="mt-3">
+          Vigil is a free, open-source menu bar app for macOS. Start a session with one click, or let triggers keep your
+          Mac awake on their own: during a Zoom call, on an external display, while a download finishes.
+        </p>
+        <ul class="mt-4 list-disc pl-5">
+          <li>Sessions indefinitely, for 15 minutes to 5 hours, until a time of day, while an app runs, or while a download finishes</li>
+          <li>A countdown next to the menu bar icon for timed sessions</li>
+          <li>Triggers: chosen apps running, an external display or drive, power source, Wi‑Fi network, a weekly schedule</li>
+          <li>Global keyboard shortcuts, a battery guard, and an option to let the display sleep</li>
+        </ul>
+        <p class="mt-4">
+          <a href="https://github.com/sibiraj-s/vigil/releases/latest">Download Vigil</a> ·
+          <a href="https://github.com/sibiraj-s/vigil">Source code</a>
+        </p>
+      </main>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

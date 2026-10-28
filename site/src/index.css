@@ -1,0 +1,44 @@
+@import 'tailwindcss';
+
+/* The palette from the design: warm paper, amber accents, and a night-blue for the menu bar
+   mockup and the install section. */
+@theme {
+  --font-sans: Inter, -apple-system, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --color-bg: #fbfaf8;
+  --color-card: #fff;
+  --color-text: #1a1a1a;
+  --color-text2: #4a4843;
+  --color-text3: #5c5a55;
+  --color-nav: #3d3b37;
+
+  --color-accent: #b45309;
+  --color-accent-dark: #8a3d05;
+  --color-accent-soft: #fdf0e1;
+  --color-amber: #f5a524;
+
+  --color-night: #1c2430;
+  --color-night-bar: #0e131a;
+  --color-night-text: #edebe7;
+  --color-night-text2: #c4c0b8;
+
+  --color-menu: #f6f5f2;
+  --color-menu-button: #e4e2dc;
+  --color-menu-label: #6b6862;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    color-scheme: light;
+  }
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
+  section[id] {
+    scroll-margin-top: 16px;
+  }
+}
