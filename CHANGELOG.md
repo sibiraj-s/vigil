@@ -1,5 +1,11 @@
 # vigil
 
+## 1.0.3
+
+### Patch Changes
+
+- 12ae3d6: Smaller downloads: The DMG now uses stronger compression, making the download about a third smaller
+
 ## 1.0.2
 
 ### Patch Changes
