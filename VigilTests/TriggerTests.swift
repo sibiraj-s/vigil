@@ -29,9 +29,20 @@ struct TriggerTests {
 
     @Test func overnightScheduleWrapsPastMidnight() {
         let schedule = Trigger.Schedule(weekdays: [2], start: 22 * 60, end: 6 * 60)
+        // Monday night belongs to Monday's window…
         #expect(schedule.contains(date(23), calendar: Self.calendar))
-        #expect(schedule.contains(date(5, 59), calendar: Self.calendar))
+        #expect(schedule.contains(date(day: 27, 5, 59), calendar: Self.calendar))
+        #expect(!schedule.contains(date(day: 27, 6), calendar: Self.calendar))
+        // …while early Monday is the tail of Sunday night, which isn't one of its days.
+        #expect(!schedule.contains(date(5, 59), calendar: Self.calendar))
         #expect(!schedule.contains(date(12), calendar: Self.calendar))
+    }
+
+    @Test func overnightScheduleWrapsSaturdayIntoSunday() {
+        let schedule = Trigger.Schedule(weekdays: [7], start: 22 * 60, end: 6 * 60)
+        // 2026-11-01 is a Sunday.
+        #expect(schedule.contains(date(day: 31, 23), calendar: Self.calendar))
+        #expect(schedule.contains(Self.calendar.date(from: DateComponents(year: 2026, month: 11, day: 1, hour: 2))!, calendar: Self.calendar))
     }
 
     @Test func daysLabelNamesCommonSets() {

@@ -89,10 +89,13 @@ struct Trigger: Identifiable, Codable, Hashable {
 
         func contains(_ date: Date, calendar: Calendar = .current) -> Bool {
             let parts = calendar.dateComponents([.weekday, .hour, .minute], from: date)
-            guard let weekday = parts.weekday, weekdays.contains(weekday) else { return false }
+            guard let weekday = parts.weekday else { return false }
             let minute = (parts.hour ?? 0) * 60 + (parts.minute ?? 0)
-            if start <= end { return minute >= start && minute < end }
-            return minute >= start || minute < end
+            if start <= end { return weekdays.contains(weekday) && minute >= start && minute < end }
+            if minute >= start { return weekdays.contains(weekday) }
+            // The after-midnight part of an overnight window belongs to the day it started on.
+            let previousDay = weekday == 1 ? 7 : weekday - 1
+            return minute < end && weekdays.contains(previousDay)
         }
 
         var daysLabel: String {

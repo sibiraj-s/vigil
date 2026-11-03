@@ -201,7 +201,7 @@ private struct GeneralPane: View {
                 }
                 CardDivider()
                 CardRow(title: "Open at login", subtitle: loginError ?? "Start Vigil when you log in to your Mac.") {
-                    Toggle("Open at login", isOn: $launchAtLogin).labelsHidden()
+                    Toggle("Open at login", isOn: Binding(get: { launchAtLogin }, set: setLaunchAtLogin)).labelsHidden()
                 }
                 CardDivider()
                 CardRow(title: "Show remaining time", subtitle: "Count down timed sessions next to the menu bar icon.") {
@@ -233,17 +233,19 @@ private struct GeneralPane: View {
                 }
             }
         }
-        .onChange(of: launchAtLogin) { _, enabled in
-            do {
-                if enabled { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() }
-                loginError = nil
-            } catch {
-                loginError = error.localizedDescription
-                launchAtLogin = SMAppService.mainApp.status == .enabled
-            }
-        }
         .onChange(of: prefs.letDisplaySleep) { awake.evaluate() }
         .onChange(of: prefs.appearance) { awake.applyAppearance() }
+    }
+
+    /// Called only by the toggle, so reverting the state after a failure doesn't re-run the opposite call.
+    private func setLaunchAtLogin(_ enabled: Bool) {
+        do {
+            if enabled { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() }
+            loginError = nil
+        } catch {
+            loginError = error.localizedDescription
+        }
+        launchAtLogin = SMAppService.mainApp.status == .enabled
     }
 }
 
