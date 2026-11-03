@@ -93,6 +93,38 @@ struct EndSessionTests {
         #expect(awake.activeTriggers.count == 1)
     }
 
+    /// Makes the trigger's condition hold or not, keeping its identity.
+    private func setConditionHolds(_ holds: Bool) {
+        let schedule = Trigger.Schedule(weekdays: holds ? Set(1...7) : [], start: 0, end: 24 * 60)
+        awake.prefs.triggers[0].condition = .schedule(schedule)
+    }
+
+    @Test func pauseSurvivesABriefDropout() {
+        defer { cleanUp() }
+        awake.end()
+        let paused = awake.now
+        setConditionHolds(false)
+        awake.evaluate(now: paused.addingTimeInterval(2))
+        #expect(awake.pausedTriggers.isEmpty)
+        setConditionHolds(true)
+        awake.evaluate(now: paused.addingTimeInterval(4))
+        #expect(!awake.isAwake)
+        #expect(awake.pausedTriggers.count == 1)
+    }
+
+    @Test func pauseClearsOnceTheConditionStaysOff() {
+        defer { cleanUp() }
+        awake.end()
+        let paused = awake.now
+        setConditionHolds(false)
+        awake.evaluate(now: paused.addingTimeInterval(2))
+        awake.evaluate(now: paused.addingTimeInterval(31))
+        setConditionHolds(true)
+        awake.evaluate(now: paused.addingTimeInterval(33))
+        #expect(awake.activeTriggers.count == 1)
+        #expect(awake.pausedTriggers.isEmpty)
+    }
+
     @Test func startingASessionUnpausesTriggers() {
         defer { cleanUp() }
         awake.end()

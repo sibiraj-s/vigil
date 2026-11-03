@@ -22,8 +22,11 @@ final class AwakeController {
     /// The Settings pane to show next time the window opens.
     var settingsPane: SettingsPane = .general
 
-    /// Triggers the user ended by hand; they stay off until their condition clears or the user starts a session.
-    private(set) var suppressedTriggers: Set<Trigger.ID> = []
+    /// Triggers the user ended by hand, with when each one's condition last held. They stay off until
+    /// their condition has been clear for `pauseGrace`, so a momentary dropout (Wi‑Fi roaming, a display
+    /// waking) doesn't undo the pause, or until the user starts a session.
+    private(set) var suppressedTriggers: [Trigger.ID: Date] = [:]
+    private static let pauseGrace: TimeInterval = 30
     @ObservationIgnored private let assertion = PowerAssertion()
     @ObservationIgnored private let downloads = FolderActivity.downloads
     @ObservationIgnored private var heartbeat: Task<Void, Never>?
@@ -71,7 +74,8 @@ final class AwakeController {
 
     /// Triggers whose condition holds but which the user ended by hand.
     var pausedTriggers: [Trigger] {
-        prefs.triggers.filter { suppressedTriggers.contains($0.id) }
+        // A condition held on the last evaluation exactly when its timestamp is that evaluation's `now`.
+        prefs.triggers.filter { suppressedTriggers[$0.id] == now }
     }
 
     // MARK: - Actions
@@ -98,7 +102,7 @@ final class AwakeController {
         prefs.lastPreset = preset
         session = ManualSession(preset: preset, started: now, endDate: endDate, app: app)
         // Asking to stay awake brings back paused triggers, so they take over once this session ends.
-        suppressedTriggers = []
+        suppressedTriggers = [:]
         evaluate()
     }
 
@@ -125,7 +129,7 @@ final class AwakeController {
     /// trigger that is currently holding the Mac awake. With no session running, triggers always stop.
     func end() {
         if session == nil || prefs.endBehavior == .everything {
-            suppressedTriggers.formUnion(activeTriggers.map(\.id))
+            for trigger in activeTriggers { suppressedTriggers[trigger.id] = now }
         }
         session = nil
         evaluate()
@@ -134,7 +138,7 @@ final class AwakeController {
     /// Lets paused triggers hold the Mac awake again.
     func resumeTriggers() {
         guard !batteryGuardTripped else { return }
-        suppressedTriggers = []
+        suppressedTriggers = [:]
         evaluate()
     }
 
@@ -158,8 +162,7 @@ final class AwakeController {
 
     // MARK: - Evaluation
 
-    func evaluate() {
-        let now = Date.now
+    func evaluate(now: Date = .now) {
         self.now = now
 
         if session?.preset == .whileDownloading {
@@ -179,9 +182,10 @@ final class AwakeController {
         }
 
         let met = prefs.triggers.filter { $0.enabled && isMet($0.condition, now: now) }
-        let suppressed = suppressedTriggers.intersection(met.map(\.id))
+        var suppressed = suppressedTriggers.filter { now.timeIntervalSince($0.value) < Self.pauseGrace }
+        for trigger in met where suppressed[trigger.id] != nil { suppressed[trigger.id] = now }
         if suppressed != suppressedTriggers { suppressedTriggers = suppressed }
-        let active = batteryGuardTripped ? [] : met.filter { !suppressedTriggers.contains($0.id) }
+        let active = batteryGuardTripped ? [] : met.filter { suppressedTriggers[$0.id] == nil }
         if active != activeTriggers { activeTriggers = active }
 
         var level = AwakeLevel.none
