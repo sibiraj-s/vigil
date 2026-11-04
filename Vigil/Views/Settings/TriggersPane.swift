@@ -209,7 +209,8 @@ private struct TriggerEditor: View {
         switch trigger.condition {
         case .apps(let apps): !apps.isEmpty
         case .wifi(let ssid): !ssid.trimmingCharacters(in: .whitespaces).isEmpty
-        case .schedule(let schedule): !schedule.weekdays.isEmpty
+        // Equal times would be an empty window that never fires.
+        case .schedule(let schedule): !schedule.weekdays.isEmpty && schedule.start != schedule.end
         default: true
         }
     }
@@ -313,6 +314,10 @@ private struct TriggerEditor: View {
                 ))
                 DatePicker("From", selection: minuteBinding(schedule, \.start), displayedComponents: .hourAndMinute)
                 DatePicker("To", selection: minuteBinding(schedule, \.end), displayedComponents: .hourAndMinute)
+            } footer: {
+                if schedule.start == schedule.end {
+                    Text("Choose different start and end times.")
+                }
             }
         }
     }
