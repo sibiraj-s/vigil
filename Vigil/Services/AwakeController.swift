@@ -31,6 +31,7 @@ final class AwakeController {
     @ObservationIgnored private let downloads = FolderActivity.downloads
     @ObservationIgnored private var heartbeat: Task<Void, Never>?
     @ObservationIgnored private var activity: NSObjectProtocol?
+    @ObservationIgnored private var preferenceWatchers: [Task<Void, Never>] = []
 
     init(prefs: Preferences = Preferences()) {
         self.prefs = prefs
@@ -45,6 +46,7 @@ final class AwakeController {
         )
         applyAppearance()
         registerHotKeys()
+        observePreferences()
         observeWorkspace()
         if prefs.triggers.contains(where: { $0.enabled && $0.condition.kind == .wifi }) {
             LocationAccess.shared.requestIfNeeded()
@@ -237,7 +239,27 @@ final class AwakeController {
 
     // MARK: - System hooks
 
-    /// Re-registers every shortcut; call after `prefs.shortcuts` changes.
+    /// Applies settings as soon as they change, wherever they're changed from.
+    private func observePreferences() {
+        let prefs = prefs
+        watch(Observations { _ = (prefs.triggers, prefs.letDisplaySleep, prefs.batteryGuardEnabled, prefs.batteryGuardThreshold) }) {
+            $0.evaluate()
+        }
+        watch(Observations { _ = prefs.shortcuts }) { $0.registerHotKeys() }
+        watch(Observations { _ = prefs.appearance }) { $0.applyAppearance() }
+    }
+
+    private func watch(_ changes: Observations<Void, Never>, then action: @escaping (AwakeController) -> Void) {
+        preferenceWatchers.append(Task { [weak self] in
+            // The first element is the current state, which `start()` has already applied.
+            for await _ in changes.dropFirst() {
+                guard let self else { return }
+                action(self)
+            }
+        })
+    }
+
+    /// Re-registers every shortcut.
     func registerHotKeys() {
         HotKeys.shared.unregisterAll()
         guard recordingShortcut == nil else { return }

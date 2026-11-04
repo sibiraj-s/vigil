@@ -58,9 +58,7 @@ struct TriggersPane: View {
                     LocationAccess.shared.requestIfNeeded()
                 }
             }
-        }
-        .onChange(of: prefs.triggers) { awake.evaluate() }
-    }
+        }    }
 }
 
 private struct TriggerRow: View {

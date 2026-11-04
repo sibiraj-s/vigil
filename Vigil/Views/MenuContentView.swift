@@ -51,7 +51,6 @@ struct MenuContentView: View {
 
         Button {
             awake.prefs.letDisplaySleep.toggle()
-            awake.evaluate()
         } label: {
             MenuRowLabel("Let the display sleep") {
                 SwitchTrack(isOn: awake.prefs.letDisplaySleep, compact: true)
