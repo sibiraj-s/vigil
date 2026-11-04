@@ -241,10 +241,13 @@ private struct TriggerEditor: View {
             // Tag by id: a renamed display is still the same display.
             let choices = displayChoices(including: display)
             Section {
-                Picker("Display", selection: Binding(
-                    get: { display?.id },
-                    set: { id in trigger.condition = .externalDisplay(display: choices.first { $0.id == id }) }
-                )) {
+                Picker(
+                    "Display",
+                    selection: Binding(
+                        get: { display?.id },
+                        set: { id in trigger.condition = .externalDisplay(display: choices.first { $0.id == id }) }
+                    )
+                ) {
                     Text("Any external display").tag(String?.none)
                     ForEach(choices) { choice in
                         Text(choice.name).tag(Optional(choice.id))
@@ -256,10 +259,13 @@ private struct TriggerEditor: View {
 
         case .power(let onCharger):
             Section {
-                Picker("Power source", selection: Binding(
-                    get: { onCharger },
-                    set: { trigger.condition = .power(onCharger: $0) }
-                )) {
+                Picker(
+                    "Power source",
+                    selection: Binding(
+                        get: { onCharger },
+                        set: { trigger.condition = .power(onCharger: $0) }
+                    )
+                ) {
                     Text("Plugged in").tag(true)
                     Text("On battery").tag(false)
                 }
@@ -271,10 +277,13 @@ private struct TriggerEditor: View {
             // Tag by id: a renamed volume is still the same drive.
             let choices = driveChoices(including: drive)
             Section {
-                Picker("Drive", selection: Binding(
-                    get: { drive?.id },
-                    set: { id in trigger.condition = .drive(choices.first { $0.id == id }) }
-                )) {
+                Picker(
+                    "Drive",
+                    selection: Binding(
+                        get: { drive?.id },
+                        set: { id in trigger.condition = .drive(choices.first { $0.id == id }) }
+                    )
+                ) {
                     Text("Any external drive").tag(String?.none)
                     ForEach(choices) { choice in
                         Text(choice.name).tag(Optional(choice.id))
@@ -286,10 +295,12 @@ private struct TriggerEditor: View {
 
         case .wifi(let ssid):
             Section {
-                TextField("Network name", text: Binding(
-                    get: { ssid },
-                    set: { trigger.condition = .wifi(ssid: $0) }
-                ))
+                TextField(
+                    "Network name",
+                    text: Binding(
+                        get: { ssid },
+                        set: { trigger.condition = .wifi(ssid: $0) }
+                    ))
                 Button("Use Current Network") {
                     LocationAccess.shared.requestIfNeeded()
                     if let current = SystemProbe.currentSSID() { trigger.condition = .wifi(ssid: current) }
@@ -300,10 +311,15 @@ private struct TriggerEditor: View {
 
         case .schedule(let schedule):
             Section {
-                WeekdayPicker(selection: Binding(
-                    get: { schedule.weekdays },
-                    set: { var s = schedule; s.weekdays = $0; trigger.condition = .schedule(s) }
-                ))
+                WeekdayPicker(
+                    selection: Binding(
+                        get: { schedule.weekdays },
+                        set: {
+                            var s = schedule
+                            s.weekdays = $0
+                            trigger.condition = .schedule(s)
+                        }
+                    ))
                 DatePicker("From", selection: minuteBinding(schedule, \.start), displayedComponents: .hourAndMinute)
                 DatePicker("To", selection: minuteBinding(schedule, \.end), displayedComponents: .hourAndMinute)
             } footer: {
@@ -335,7 +351,7 @@ private struct TriggerEditor: View {
         panel.directoryURL = URL(filePath: "/Applications")
         panel.prompt = "Choose"
         guard panel.runModal() == .OK, let url = panel.url,
-              let id = Bundle(url: url)?.bundleIdentifier
+            let id = Bundle(url: url)?.bundleIdentifier
         else { return nil }
         let name = FileManager.default.displayName(atPath: url.path).replacingOccurrences(of: ".app", with: "")
         return AppRef(bundleID: id, name: name)

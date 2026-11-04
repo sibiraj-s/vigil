@@ -10,7 +10,8 @@ final class PowerAssertion {
         guard newLevel != level else { return }
         guard newLevel != .none else { return release() }
 
-        let type = newLevel == .display
+        let type =
+            newLevel == .display
             ? kIOPMAssertionTypePreventUserIdleDisplaySleep
             : kIOPMAssertionTypePreventUserIdleSystemSleep
         var newID: IOPMAssertionID = 0

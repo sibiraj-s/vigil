@@ -83,11 +83,12 @@ extension Color {
 
     /// A color that follows the light or dark appearance it is drawn in.
     init(light: UInt32, dark: UInt32, opacity: Double = 1) {
-        self.init(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-                ? NSColor(hex: dark, opacity: opacity)
-                : NSColor(hex: light, opacity: opacity)
-        })
+        self.init(
+            nsColor: NSColor(name: nil) { appearance in
+                appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+                    ? NSColor(hex: dark, opacity: opacity)
+                    : NSColor(hex: light, opacity: opacity)
+            })
     }
 }
 
@@ -182,10 +183,14 @@ enum DesignIcon {
             switch self {
             case .general:
                 p.addEllipse(in: CGRect(x: 5.5, y: 5.5, width: 5, height: 5))
-                line(pt(8, 1.5), pt(8, 3.5)); line(pt(8, 12.5), pt(8, 14.5))
-                line(pt(1.5, 8), pt(3.5, 8)); line(pt(12.5, 8), pt(14.5, 8))
-                line(pt(3.4, 3.4), pt(4.8, 4.8)); line(pt(11.2, 11.2), pt(12.6, 12.6))
-                line(pt(3.4, 12.6), pt(4.8, 11.2)); line(pt(11.2, 4.8), pt(12.6, 3.4))
+                line(pt(8, 1.5), pt(8, 3.5))
+                line(pt(8, 12.5), pt(8, 14.5))
+                line(pt(1.5, 8), pt(3.5, 8))
+                line(pt(12.5, 8), pt(14.5, 8))
+                line(pt(3.4, 3.4), pt(4.8, 4.8))
+                line(pt(11.2, 11.2), pt(12.6, 12.6))
+                line(pt(3.4, 12.6), pt(4.8, 11.2))
+                line(pt(11.2, 4.8), pt(12.6, 3.4))
             case .triggers:
                 line(pt(9, 1.5), pt(3, 9), pt(7.5, 9), pt(7, 14.5), pt(13, 7), pt(8.5, 7))
                 p.closeSubpath()
@@ -203,9 +208,11 @@ enum DesignIcon {
                 rect(2, 2, 12, 12, 3)
             case .display:
                 rect(1.5, 2.5, 13, 8.5, 1.5)
-                line(pt(5.5, 14), pt(10.5, 14)); line(pt(8, 11), pt(8, 14))
+                line(pt(5.5, 14), pt(10.5, 14))
+                line(pt(8, 11), pt(8, 14))
             case .power:
-                line(pt(6, 1.5), pt(6, 4.5)); line(pt(10, 1.5), pt(10, 4.5))
+                line(pt(6, 1.5), pt(6, 4.5))
+                line(pt(10, 1.5), pt(10, 4.5))
                 rect(3.5, 4.5, 9, 5, 2)
                 line(pt(8, 9.5), pt(8, 14.5))
             case .drive:
@@ -219,9 +226,11 @@ enum DesignIcon {
             case .schedule:
                 rect(2, 3, 12, 11, 2)
                 line(pt(2, 6.5), pt(14, 6.5))
-                line(pt(5.5, 1.5), pt(5.5, 4.5)); line(pt(10.5, 1.5), pt(10.5, 4.5))
+                line(pt(5.5, 1.5), pt(5.5, 4.5))
+                line(pt(10.5, 1.5), pt(10.5, 4.5))
             case .plus:
-                line(pt(6, 1.5), pt(6, 10.5)); line(pt(1.5, 6), pt(10.5, 6))
+                line(pt(6, 1.5), pt(6, 10.5))
+                line(pt(1.5, 6), pt(10.5, 6))
             case .check:
                 line(pt(1, 5.5), pt(4.2, 8.5), pt(11, 1.5))
             }

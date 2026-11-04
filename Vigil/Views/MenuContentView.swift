@@ -105,7 +105,9 @@ struct MenuContentView: View {
         // Activation is only a request and can lose to the frontmost app, so raise the window
         // explicitly once it exists.
         DispatchQueue.main.async {
-            guard let window = NSApp.windows.first(where: { $0.identifier?.rawValue.hasPrefix(SettingsView.windowID) == true }) else { return }
+            guard let window = NSApp.windows.first(where: { $0.identifier?.rawValue.hasPrefix(SettingsView.windowID) == true }) else {
+                return
+            }
             window.makeKeyAndOrderFront(nil)
             window.orderFrontRegardless()
         }

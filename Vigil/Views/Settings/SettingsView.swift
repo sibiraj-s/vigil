@@ -208,11 +208,16 @@ private struct GeneralPane: View {
                     Toggle("Show remaining time", isOn: $prefs.showRemainingTime).labelsHidden()
                 }
                 CardDivider()
-                CardRow(title: "Let the display sleep", subtitle: "During manual sessions, keep the Mac awake but let the screen turn off and the screen saver start.") {
+                CardRow(
+                    title: "Let the display sleep",
+                    subtitle: "During manual sessions, keep the Mac awake but let the screen turn off and the screen saver start."
+                ) {
                     Toggle("Let the display sleep", isOn: $prefs.letDisplaySleep).labelsHidden()
                 }
                 CardDivider()
-                CardRow(title: "End session stops", subtitle: "Whether ending a session also pauses triggers that are keeping the Mac awake.") {
+                CardRow(
+                    title: "End session stops", subtitle: "Whether ending a session also pauses triggers that are keeping the Mac awake."
+                ) {
                     Picker("End session stops", selection: $prefs.endBehavior) {
                         ForEach(EndBehavior.allCases) { Text($0.label).tag($0) }
                     }
@@ -298,7 +303,6 @@ struct BatteryGuardRow: View {
         }
     }
 }
-
 
 private struct AboutPane: View {
     private let updater = Updater.shared

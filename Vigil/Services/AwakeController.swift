@@ -172,7 +172,8 @@ final class AwakeController {
         }
 
         if let battery = SystemProbe.battery() {
-            batteryGuardTripped = prefs.batteryGuardEnabled
+            batteryGuardTripped =
+                prefs.batteryGuardEnabled
                 && battery.onBattery
                 && battery.percent < prefs.batteryGuardThreshold
         } else {
@@ -251,14 +252,15 @@ final class AwakeController {
     }
 
     private func watch(_ changes: Observations<Void, Never>, then action: @escaping (AwakeController) -> Void) {
-        preferenceWatchers.append(Task { [weak self] in
-            // The first element is read only once this task runs, so it may already include a change made
-            // after `start()`; applying it again is harmless, while skipping it could lose that change.
-            for await _ in changes {
-                guard let self else { return }
-                action(self)
-            }
-        })
+        preferenceWatchers.append(
+            Task { [weak self] in
+                // The first element is read only once this task runs, so it may already include a change made
+                // after `start()`; applying it again is harmless, while skipping it could lose that change.
+                for await _ in changes {
+                    guard let self else { return }
+                    action(self)
+                }
+            })
     }
 
     /// Re-registers every shortcut.

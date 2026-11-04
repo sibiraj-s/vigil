@@ -21,7 +21,7 @@ final class HotKeys {
         let status = RegisterEventHotKey(
             UInt32(keyCode),
             UInt32(modifiers),
-            EventHotKeyID(signature: OSType(0x5647_494C), id: id), // "VGIL"
+            EventHotKeyID(signature: OSType(0x5647_494C), id: id),  // "VGIL"
             GetApplicationEventTarget(),
             0,
             &ref
@@ -33,7 +33,7 @@ final class HotKeys {
     }
 
     func unregisterAll() {
-        refs.forEach { UnregisterEventHotKey($0) }
+        for ref in refs { UnregisterEventHotKey(ref) }
         refs.removeAll()
         actions.removeAll()
     }

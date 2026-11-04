@@ -1,5 +1,5 @@
-import { links } from '../links'
-import { appIcon } from './Icons'
+import { links } from '../links';
+import { appIcon } from './Icons';
 
 export function Footer() {
   return (
@@ -23,5 +23,5 @@ export function Footer() {
         </nav>
       </div>
     </footer>
-  )
+  );
 }

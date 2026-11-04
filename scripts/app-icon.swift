@@ -9,8 +9,9 @@ import AppKit
 let output = URL(fileURLWithPath: "Vigil/Assets.xcassets/AppIcon.appiconset", isDirectory: true)
 
 func rgb(_ hex: UInt32, _ alpha: CGFloat = 1) -> CGColor {
-    CGColor(srgbRed: CGFloat((hex >> 16) & 0xFF) / 255, green: CGFloat((hex >> 8) & 0xFF) / 255,
-            blue: CGFloat(hex & 0xFF) / 255, alpha: alpha)
+    CGColor(
+        srgbRed: CGFloat((hex >> 16) & 0xFF) / 255, green: CGFloat((hex >> 8) & 0xFF) / 255,
+        blue: CGFloat(hex & 0xFF) / 255, alpha: alpha)
 }
 
 /// The icon on a 1024-point canvas, top-left origin; `context` is already scaled to the pixel size.
@@ -31,8 +32,9 @@ func drawIcon(in context: CGContext) {
     context.saveGState()
     context.addPath(shape)
     context.clip()
-    let gradient = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB),
-                              colors: [rgb(0xF5A524), rgb(0xB45309)] as CFArray, locations: [0, 1])!
+    let gradient = CGGradient(
+        colorsSpace: CGColorSpace(name: CGColorSpace.sRGB),
+        colors: [rgb(0xF5A524), rgb(0xB45309)] as CFArray, locations: [0, 1])!
     context.drawLinearGradient(gradient, start: CGPoint(x: 512, y: tile.minY), end: CGPoint(x: 512, y: tile.maxY), options: [])
     context.restoreGState()
 
@@ -64,9 +66,10 @@ func drawIcon(in context: CGContext) {
 }
 
 func png(pixels: Int) -> Data {
-    let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: pixels, pixelsHigh: pixels, bitsPerSample: 8,
-                               samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB,
-                               bytesPerRow: 0, bitsPerPixel: 0)!
+    let rep = NSBitmapImageRep(
+        bitmapDataPlanes: nil, pixelsWide: pixels, pixelsHigh: pixels, bitsPerSample: 8,
+        samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB,
+        bytesPerRow: 0, bitsPerPixel: 0)!
     let context = NSGraphicsContext(bitmapImageRep: rep)!.cgContext
     // Flip to a top-left origin, like EyeGlyph's paths expect.
     context.translateBy(x: 0, y: CGFloat(pixels))

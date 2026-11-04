@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import Vigil
 
 /// Each test gets its own defaults domain, so nothing touches the real settings.

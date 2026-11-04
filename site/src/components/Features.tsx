@@ -1,7 +1,9 @@
-import type { ReactNode } from 'react'
-import { BatteryIcon, BoltIcon, ClockIcon, DisplayIcon, EyeIcon, KeyboardIcon } from './Icons'
+import type { ReactNode } from 'react';
+import { BatteryIcon, BoltIcon, ClockIcon, DisplayIcon, EyeIcon, KeyboardIcon } from './Icons';
 
-const Keys = ({ children }: { children: ReactNode }) => <span className="font-mono text-sm">{children}</span>
+const Keys = ({ children }: { children: ReactNode }) => (
+  <span className="font-mono text-sm">{children}</span>
+);
 
 const features: { icon: ReactNode; title: string; body: ReactNode }[] = [
   {
@@ -24,8 +26,8 @@ const features: { icon: ReactNode; title: string; body: ReactNode }[] = [
     title: 'Global shortcuts',
     body: (
       <>
-        Start or end a session from any app. <Keys>⌥⌘0</Keys> for indefinitely, <Keys>⌥⌘1</Keys> for an hour, or set
-        your own.
+        Start or end a session from any app. <Keys>⌥⌘0</Keys> for indefinitely, <Keys>⌥⌘1</Keys> for
+        an hour, or set your own.
       </>
     ),
   },
@@ -39,7 +41,7 @@ const features: { icon: ReactNode; title: string; body: ReactNode }[] = [
     title: 'Let the display rest',
     body: 'Optionally turn the screen off while the Mac keeps running.',
   },
-]
+];
 
 export function Features() {
   return (
@@ -49,7 +51,9 @@ export function Features() {
           <h2 className="text-[clamp(2rem,4vw,2.75rem)] leading-[1.1] font-extrabold tracking-[-0.03em]">
             Tell your Mac “not yet.”
           </h2>
-          <p className="text-lg text-text2">For an hour. Until the build finishes. Until you say so.</p>
+          <p className="text-lg text-text2">
+            For an hour. Until the build finishes. Until you say so.
+          </p>
         </div>
         <div className="flex flex-wrap gap-5">
           {features.map(({ icon, title, body }) => (
@@ -67,5 +71,5 @@ export function Features() {
         </div>
       </div>
     </section>
-  )
+  );
 }

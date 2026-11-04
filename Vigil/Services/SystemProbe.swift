@@ -15,12 +15,12 @@ enum SystemProbe {
 
     static func battery() -> Battery? {
         guard let info = IOPSCopyPowerSourcesInfo()?.takeRetainedValue(),
-              let sources = IOPSCopyPowerSourcesList(info)?.takeRetainedValue() as? [CFTypeRef]
+            let sources = IOPSCopyPowerSourcesList(info)?.takeRetainedValue() as? [CFTypeRef]
         else { return nil }
 
         for source in sources {
             guard let description = IOPSGetPowerSourceDescription(info, source)?.takeUnretainedValue() as? [String: Any],
-                  description[kIOPSTypeKey] as? String == kIOPSInternalBatteryType
+                description[kIOPSTypeKey] as? String == kIOPSInternalBatteryType
             else { continue }
             let current = description[kIOPSCurrentCapacityKey] as? Int ?? 0
             let maximum = max(description[kIOPSMaxCapacityKey] as? Int ?? 100, 1)
@@ -33,7 +33,7 @@ enum SystemProbe {
     /// Whether the Mac is running on the power adapter. Macs without a battery always are.
     static func isOnCharger() -> Bool {
         guard let info = IOPSCopyPowerSourcesInfo()?.takeRetainedValue(),
-              let source = IOPSGetProvidingPowerSourceType(info)?.takeUnretainedValue()
+            let source = IOPSGetProvidingPowerSourceType(info)?.takeUnretainedValue()
         else { return true }
         return (source as String) == kIOPSACPowerValue
     }
@@ -44,9 +44,9 @@ enum SystemProbe {
         return urls.compactMap { url in
             // Network volumes report no "internal" value, so only explicit externals count.
             guard let values = try? url.resourceValues(forKeys: Set(keys)),
-                  values.volumeIsInternal == false,
-                  values.volumeIsRootFileSystem != true,
-                  !isDiskImage(url)
+                values.volumeIsInternal == false,
+                values.volumeIsRootFileSystem != true,
+                !isDiskImage(url)
             else { return nil }
             let name = values.volumeName ?? url.lastPathComponent
             return DriveRef(id: values.volumeUUIDString ?? name, name: name)
@@ -58,8 +58,8 @@ enum SystemProbe {
     /// Mounted .dmg files also report as external, but they aren't drives anyone plugged in.
     private static func isDiskImage(_ url: URL) -> Bool {
         guard let diskSession,
-              let disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, diskSession, url as CFURL),
-              let description = DADiskCopyDescription(disk) as? [String: Any]
+            let disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, diskSession, url as CFURL),
+            let description = DADiskCopyDescription(disk) as? [String: Any]
         else { return false }
         return description[kDADiskDescriptionDeviceModelKey as String] as? String == "Disk Image"
     }
@@ -73,7 +73,7 @@ enum SystemProbe {
     static func externalDisplays() -> [DisplayRef] {
         let displays = NSScreen.screens.compactMap { screen -> DisplayRef? in
             guard let number = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber,
-                  CGDisplayIsBuiltin(number.uint32Value) == 0
+                CGDisplayIsBuiltin(number.uint32Value) == 0
             else { return nil }
             let id = number.uint32Value
             return DisplayRef(
@@ -162,11 +162,13 @@ final class FolderActivity {
 
     func poll(now: Date = .now) {
         let keys: [URLResourceKey] = [.fileSizeKey, .contentModificationDateKey]
-        guard let enumerator = FileManager.default.enumerator(
-            at: url,
-            includingPropertiesForKeys: keys,
-            options: [.skipsHiddenFiles]
-        ) else { return }
+        guard
+            let enumerator = FileManager.default.enumerator(
+                at: url,
+                includingPropertiesForKeys: keys,
+                options: [.skipsHiddenFiles]
+            )
+        else { return }
 
         var hasher = Hasher()
         for case let item as URL in enumerator {

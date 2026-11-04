@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react'
-import type { Release } from '../useLatestRelease'
-import { DownloadIcon, appIcon } from './Icons'
+import type { ReactNode } from 'react';
+import type { Release } from '../useLatestRelease';
+import { DownloadIcon, appIcon } from './Icons';
 
 export function Install({ release }: { release: Release }) {
   const steps: { title: string; body: ReactNode }[] = [
@@ -8,8 +8,8 @@ export function Install({ release }: { release: Release }) {
       title: 'Download the disk image',
       body: (
         <>
-          Grab <span className="font-mono text-sm text-amber">Vigil-{release.version}.dmg</span> from the latest
-          GitHub release.
+          Grab <span className="font-mono text-sm text-amber">Vigil-{release.version}.dmg</span>{' '}
+          from the latest GitHub release.
         </>
       ),
     },
@@ -21,7 +21,7 @@ export function Install({ release }: { release: Release }) {
       title: 'Look for the eye',
       body: 'Launch Vigil and it appears in your menu bar. Click it to start your first session.',
     },
-  ]
+  ];
 
   return (
     <section id="install" className="bg-night text-night-text">
@@ -32,8 +32,8 @@ export function Install({ release }: { release: Release }) {
             Free, open source, and three steps away.
           </h2>
           <p className="text-[17px] text-night-text2">
-            Requires macOS 27 or later on Apple Silicon. Vigil checks for updates once a day, installs them from inside
-            the app, and can open at login.
+            Requires macOS 27 or later on Apple Silicon. Vigil checks for updates once a day,
+            installs them from inside the app, and can open at login.
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             <a
@@ -47,7 +47,10 @@ export function Install({ release }: { release: Release }) {
         </div>
         <ol className="flex min-w-0 flex-[1_1_440px] flex-col gap-4">
           {steps.map(({ title, body }, i) => (
-            <li key={title} className="flex gap-4.5 rounded-[14px] border border-white/10 bg-white/6 p-6">
+            <li
+              key={title}
+              className="flex gap-4.5 rounded-[14px] border border-white/10 bg-white/6 p-6"
+            >
               <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-amber font-bold text-text">
                 {i + 1}
               </span>
@@ -60,5 +63,5 @@ export function Install({ release }: { release: Release }) {
         </ol>
       </div>
     </section>
-  )
+  );
 }

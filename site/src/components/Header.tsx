@@ -1,5 +1,5 @@
-import { links } from '../links'
-import { GitHubIcon, appIcon } from './Icons'
+import { links } from '../links';
+import { GitHubIcon, appIcon } from './Icons';
 
 export function Header() {
   return (
@@ -29,5 +29,5 @@ export function Header() {
         </nav>
       </div>
     </header>
-  )
+  );
 }

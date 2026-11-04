@@ -60,10 +60,10 @@ struct Trigger: Identifiable, Codable, Hashable {
         /// Whether two conditions would fire in exactly the same situations.
         func isEquivalent(to other: Condition) -> Bool {
             switch (self, other) {
-            case let (.apps(a), .apps(b)): Set(a.map(\.bundleID)) == Set(b.map(\.bundleID))
-            case let (.wifi(a), .wifi(b)): a.trimmingCharacters(in: .whitespaces) == b.trimmingCharacters(in: .whitespaces)
-            case let (.externalDisplay(a), .externalDisplay(b)): a?.id == b?.id
-            case let (.drive(a), .drive(b)): a?.id == b?.id
+            case (.apps(let a), .apps(let b)): Set(a.map(\.bundleID)) == Set(b.map(\.bundleID))
+            case (.wifi(let a), .wifi(let b)): a.trimmingCharacters(in: .whitespaces) == b.trimmingCharacters(in: .whitespaces)
+            case (.externalDisplay(let a), .externalDisplay(let b)): a?.id == b?.id
+            case (.drive(let a), .drive(let b)): a?.id == b?.id
             default: self == other
             }
         }
@@ -167,10 +167,12 @@ struct Trigger: Identifiable, Codable, Hashable {
     }
 
     static let defaults: [Trigger] = [
-        Trigger(keepDisplayOn: true, condition: .apps([
-            AppRef(bundleID: "us.zoom.xos", name: "Zoom"),
-            AppRef(bundleID: "com.microsoft.teams2", name: "Teams"),
-        ])),
+        Trigger(
+            keepDisplayOn: true,
+            condition: .apps([
+                AppRef(bundleID: "us.zoom.xos", name: "Zoom"),
+                AppRef(bundleID: "com.microsoft.teams2", name: "Teams"),
+            ])),
         Trigger(condition: .externalDisplay(display: nil)),
         Trigger(enabled: false, condition: .power(onCharger: true)),
         Trigger(enabled: false, condition: .schedule(Schedule())),

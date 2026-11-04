@@ -1,6 +1,7 @@
 import AppKit
 import Carbon.HIToolbox
 import Testing
+
 @testable import Vigil
 
 struct ShortcutTests {

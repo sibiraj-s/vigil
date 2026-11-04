@@ -1,4 +1,4 @@
-const repo = 'https://github.com/sibiraj-s/vigil'
+const repo = 'https://github.com/sibiraj-s/vigil';
 
 export const links = {
   repo,
@@ -7,4 +7,4 @@ export const links = {
   changelog: `${repo}/blob/master/CHANGELOG.md`,
   issues: `${repo}/issues`,
   latestReleaseApi: 'https://api.github.com/repos/sibiraj-s/vigil/releases/latest',
-}
+};

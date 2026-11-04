@@ -78,15 +78,18 @@ final class Preferences {
         batteryGuardEnabled = defaults.bool(forKey: Key.batteryGuardEnabled)
         batteryGuardThreshold = defaults.integer(forKey: Key.batteryGuardThreshold)
         lastPreset = defaults.string(forKey: Key.lastPreset).flatMap(Preset.init) ?? .hour1
-        lastUntilTime = defaults.object(forKey: Key.lastUntilTime) as? Date
+        lastUntilTime =
+            defaults.object(forKey: Key.lastUntilTime) as? Date
             ?? Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: .now) ?? .now
         lastApp = Self.load(AppRef.self, from: defaults, forKey: Key.lastApp)
         appearance = defaults.string(forKey: Key.appearance).flatMap(AppearanceMode.init) ?? .system
         endBehavior = defaults.string(forKey: Key.endBehavior).flatMap(EndBehavior.init) ?? .sessionOnly
         // Decode one by one so an entry of a removed kind is dropped instead of resetting the list.
-        shortcuts = Self.load([Lossy<Shortcut>].self, from: defaults, forKey: Key.shortcuts)?.compactMap(\.value)
+        shortcuts =
+            Self.load([Lossy<Shortcut>].self, from: defaults, forKey: Key.shortcuts)?.compactMap(\.value)
             ?? Shortcut.defaults
-        triggers = Self.load([Lossy<Trigger>].self, from: defaults, forKey: Key.triggers)?.compactMap(\.value)
+        triggers =
+            Self.load([Lossy<Trigger>].self, from: defaults, forKey: Key.triggers)?.compactMap(\.value)
             ?? Trigger.defaults
     }
 

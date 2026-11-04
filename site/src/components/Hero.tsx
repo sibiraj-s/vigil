@@ -1,10 +1,13 @@
-import { links } from '../links'
-import type { Release } from '../useLatestRelease'
-import { CheckIcon, DownloadIcon, EyeIcon } from './Icons'
+import { links } from '../links';
+import type { Release } from '../useLatestRelease';
+import { CheckIcon, DownloadIcon, EyeIcon } from './Icons';
 
 export function Hero({ release }: { release: Release }) {
   return (
-    <section id="top" className="mx-auto flex max-w-290 flex-wrap items-center gap-14 px-6 pt-22 pb-24">
+    <section
+      id="top"
+      className="mx-auto flex max-w-290 flex-wrap items-center gap-14 px-6 pt-22 pb-24"
+    >
       <div className="flex min-w-0 flex-[1_1_440px] flex-col gap-7">
         <span className="self-start rounded-full bg-accent-soft px-3 py-1.5 text-[13px] font-semibold text-accent-dark">
           Free &amp; open source · macOS
@@ -13,8 +16,8 @@ export function Hero({ release }: { release: Release }) {
           Your Mac stays awake. For exactly as long as you need.
         </h1>
         <p className="max-w-136 text-[19px] leading-[1.55] text-text2">
-          Start a session with one click, or let triggers keep your Mac awake on their own: during a Zoom call, on an
-          external display, while a download finishes.
+          Start a session with one click, or let triggers keep your Mac awake on their own: during a
+          Zoom call, on an external display, while a download finishes.
         </p>
         <div className="flex flex-wrap gap-3">
           <a
@@ -31,12 +34,14 @@ export function Hero({ release }: { release: Release }) {
             View source
           </a>
         </div>
-        <p className="text-[13px] text-text3">Version {release.version} · macOS 27 or later · Apple Silicon</p>
+        <p className="text-[13px] text-text3">
+          Version {release.version} · macOS 27 or later · Apple Silicon
+        </p>
       </div>
 
       <MenuMockup />
     </section>
-  )
+  );
 }
 
 const menuItems = [
@@ -47,7 +52,7 @@ const menuItems = [
   { label: 'Until a time…' },
   { label: 'While an app runs…' },
   { label: 'While a download finishes…' },
-]
+];
 
 /** Vigil's menu open below the menu bar, keeping the Mac awake for an hour. */
 function MenuMockup() {
@@ -86,13 +91,19 @@ function MenuMockup() {
           </span>
           {menuItems.map((item) =>
             item.selected ? (
-              <span key={item.label} className="flex h-7.5 items-center gap-2 rounded-md bg-accent px-3 text-white">
+              <span
+                key={item.label}
+                className="flex h-7.5 items-center gap-2 rounded-md bg-accent px-3 text-white"
+              >
                 <CheckIcon className="h-2.5 w-3.5" />
                 <span className="grow">{item.label}</span>
                 <span className="text-xs">{item.shortcut}</span>
               </span>
             ) : (
-              <span key={item.label} className="flex h-7.5 items-center justify-between pr-3 pl-8.5">
+              <span
+                key={item.label}
+                className="flex h-7.5 items-center justify-between pr-3 pl-8.5"
+              >
                 {item.label}
                 {item.shortcut && <span className="text-xs text-menu-label">{item.shortcut}</span>}
               </span>
@@ -101,5 +112,5 @@ function MenuMockup() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,6 +1,7 @@
 import Foundation
 import IOKit.pwr_mgt
 import Testing
+
 @testable import Vigil
 
 /// Uses real IOKit assertions, released before each test returns.
@@ -11,10 +12,11 @@ struct PowerAssertionTests {
     private func heldTypes() -> [String] {
         var byProcess: Unmanaged<CFDictionary>?
         guard IOPMCopyAssertionsByProcess(&byProcess) == kIOReturnSuccess,
-              let all = byProcess?.takeRetainedValue() as? [Int: [[String: Any]]]
+            let all = byProcess?.takeRetainedValue() as? [Int: [[String: Any]]]
         else { return [] }
         let own = all[Int(ProcessInfo.processInfo.processIdentifier)] ?? []
-        return own
+        return
+            own
             .filter { $0[kIOPMAssertionNameKey] as? String == Self.reason }
             .compactMap { $0[kIOPMAssertionTypeKey] as? String }
     }

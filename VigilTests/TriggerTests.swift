@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import Vigil
 
 struct TriggerTests {
@@ -42,7 +43,8 @@ struct TriggerTests {
         let schedule = Trigger.Schedule(weekdays: [7], start: 22 * 60, end: 6 * 60)
         // 2026-11-01 is a Sunday.
         #expect(schedule.contains(date(day: 31, 23), calendar: Self.calendar))
-        #expect(schedule.contains(Self.calendar.date(from: DateComponents(year: 2026, month: 11, day: 1, hour: 2))!, calendar: Self.calendar))
+        #expect(
+            schedule.contains(Self.calendar.date(from: DateComponents(year: 2026, month: 11, day: 1, hour: 2))!, calendar: Self.calendar))
     }
 
     @Test func scheduleNeedsADayAndDistinctTimes() {
@@ -73,8 +75,9 @@ struct TriggerTests {
         #expect(Trigger.Condition.drive(drive).isEquivalent(to: .drive(DriveRef(id: "UUID-1", name: "TM"))))
         #expect(!Trigger.Condition.drive(drive).isEquivalent(to: .drive(nil)))
         let display = DisplayRef(id: "1-2-3", name: "Studio Display")
-        #expect(Trigger.Condition.externalDisplay(display: display)
-            .isEquivalent(to: .externalDisplay(display: DisplayRef(id: "1-2-3", name: "Studio Display (1)"))))
+        #expect(
+            Trigger.Condition.externalDisplay(display: display)
+                .isEquivalent(to: .externalDisplay(display: DisplayRef(id: "1-2-3", name: "Studio Display (1)"))))
     }
 
     @Test func differentKindsAreNeverEquivalent() {
