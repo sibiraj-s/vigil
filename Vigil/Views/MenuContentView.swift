@@ -43,6 +43,8 @@ struct MenuContentView: View {
                     awake.start(preset)
                 }
             }
+            // The header says the battery guard is why.
+            .disabled(awake.batteryGuardTripped)
         }
 
         MenuDivider()
@@ -326,6 +328,7 @@ private struct UntilTimePage: View {
             }
             .buttonStyle(ProminentStyle(filled: true))
             .keyboardShortcut(.defaultAction)
+            .disabled(awake.batteryGuardTripped)
         }
         .padding(EdgeInsets(top: 0, leading: 11, bottom: 10, trailing: 11))
         .onAppear { time = awake.prefs.lastUntilTime }
@@ -364,6 +367,7 @@ private struct PickAppPage: View {
                 }
             }
         }
+        .disabled(awake.batteryGuardTripped)
         .frame(maxHeight: 320)
         .fixedSize(horizontal: false, vertical: true)
         .onAppear { apps = SystemProbe.runningRegularApps() }

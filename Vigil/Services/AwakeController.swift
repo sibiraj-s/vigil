@@ -241,7 +241,9 @@ final class AwakeController {
             }
             let preset = shortcut.preset
             let ok = HotKeys.shared.register(keyCode: keyCode, modifiers: shortcut.modifiers) { [weak self] in
-                self?.toggle(preset)
+                guard let self else { return }
+                // Nothing can start while the battery guard holds, and a hot key has nowhere else to say so.
+                if batteryGuardTripped { NSSound.beep() } else { toggle(preset) }
             }
             if ok { registered.append(shortcut) } else { unavailable.insert(shortcut.id) }
         }
