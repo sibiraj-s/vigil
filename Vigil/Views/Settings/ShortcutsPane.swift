@@ -182,10 +182,13 @@ private struct ShortcutRecorder: View {
         let flags = event.modifierFlags.intersection([.command, .option, .control, .shift])
 
         if code == kVK_Escape, flags.isEmpty { return stop() }
+        // Each write through the binding saves Preferences, so change a copy and assign it once.
+        var updated = shortcut
         if code == kVK_Delete, flags.isEmpty {
-            shortcut.keyCode = nil
-            shortcut.modifiers = 0
-            shortcut.keyName = ""
+            updated.keyCode = nil
+            updated.modifiers = 0
+            updated.keyName = ""
+            shortcut = updated
             return stop()
         }
 
@@ -196,9 +199,10 @@ private struct ShortcutRecorder: View {
             return
         }
 
-        shortcut.keyCode = code
-        shortcut.modifiers = Shortcut.carbonModifiers(flags)
-        shortcut.keyName = Shortcut.keyName(for: event)
+        updated.keyCode = code
+        updated.modifiers = Shortcut.carbonModifiers(flags)
+        updated.keyName = Shortcut.keyName(for: event)
+        shortcut = updated
         stop()
     }
 }
