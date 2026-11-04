@@ -8,23 +8,24 @@ final class PowerAssertion {
 
     func set(_ newLevel: AwakeLevel, reason: String) {
         guard newLevel != level else { return }
-        release()
-        guard newLevel != .none else { return }
+        guard newLevel != .none else { return release() }
 
         let type = newLevel == .display
             ? kIOPMAssertionTypePreventUserIdleDisplaySleep
             : kIOPMAssertionTypePreventUserIdleSystemSleep
+        var newID: IOPMAssertionID = 0
         let result = IOPMAssertionCreateWithName(
             type as CFString,
             IOPMAssertionLevel(kIOPMAssertionLevelOn),
             reason as CFString,
-            &assertionID
+            &newID
         )
-        if result == kIOReturnSuccess {
-            level = newLevel
-        } else {
-            assertionID = 0
-        }
+        // Swap only once the new assertion exists, so the Mac is never left unprotected in between.
+        // On failure the old one stays, and the next call retries since `level` still differs.
+        guard result == kIOReturnSuccess else { return }
+        release()
+        assertionID = newID
+        level = newLevel
     }
 
     private func release() {
