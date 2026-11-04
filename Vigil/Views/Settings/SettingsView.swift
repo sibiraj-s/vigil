@@ -257,12 +257,7 @@ private struct PowerPane: View {
         PaneScroll {
             PaneHeader(title: "Battery & Power", subtitle: "Protect your battery while Vigil keeps the Mac awake.")
             Card {
-                CardRow(
-                    title: "Battery guard",
-                    subtitle: "End any session when battery drops below \(prefs.batteryGuardThreshold)% and the charger is unplugged."
-                ) {
-                    Toggle("Battery guard", isOn: $prefs.batteryGuardEnabled).labelsHidden()
-                }
+                BatteryGuardRow()
                 CardDivider()
                 HStack(spacing: 12) {
                     Text("Threshold")
@@ -288,8 +283,23 @@ private struct PowerPane: View {
                     .foregroundStyle(Theme.textSecondary)
             }
         }
-        .onChange(of: prefs.batteryGuardEnabled) { awake.evaluate() }
         .onChange(of: prefs.batteryGuardThreshold) { awake.evaluate() }
+    }
+}
+
+/// The battery guard switch, shown in both the Battery & Power and Triggers panes.
+struct BatteryGuardRow: View {
+    @Environment(AwakeController.self) private var awake
+
+    var body: some View {
+        @Bindable var prefs = awake.prefs
+        CardRow(
+            title: "Battery guard",
+            subtitle: "End any session when battery drops below \(prefs.batteryGuardThreshold)% and the charger is unplugged."
+        ) {
+            Toggle("Battery guard", isOn: $prefs.batteryGuardEnabled).labelsHidden()
+        }
+        .onChange(of: prefs.batteryGuardEnabled) { awake.evaluate() }
     }
 }
 

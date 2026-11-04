@@ -40,12 +40,7 @@ struct TriggersPane: View {
             }
 
             Card {
-                CardRow(
-                    title: "Battery guard",
-                    subtitle: "End any session when battery drops below \(prefs.batteryGuardThreshold)% and the charger is unplugged."
-                ) {
-                    Toggle("Battery guard", isOn: $prefs.batteryGuardEnabled).labelsHidden()
-                }
+                BatteryGuardRow()
             }
         }
         .sheet(item: $editing) { trigger in
@@ -65,7 +60,6 @@ struct TriggersPane: View {
             }
         }
         .onChange(of: prefs.triggers) { awake.evaluate() }
-        .onChange(of: prefs.batteryGuardEnabled) { awake.evaluate() }
     }
 }
 
