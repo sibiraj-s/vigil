@@ -65,8 +65,7 @@ enum SystemProbe {
     }
 
     /// Whether `drive` is mounted, or any external drive when it is `nil`.
-    static func isMounted(_ drive: DriveRef?) -> Bool {
-        let mounted = externalDrives()
+    static func isMounted(_ drive: DriveRef?, among mounted: [DriveRef] = externalDrives()) -> Bool {
         guard let drive else { return !mounted.isEmpty }
         return mounted.contains { $0.id == drive.id }
     }
@@ -89,8 +88,7 @@ enum SystemProbe {
     }
 
     /// Whether `display` is connected, or any external display when it is `nil`.
-    static func isConnected(_ display: DisplayRef?) -> Bool {
-        let connected = externalDisplays()
+    static func isConnected(_ display: DisplayRef?, among connected: [DisplayRef] = externalDisplays()) -> Bool {
         guard let display else { return !connected.isEmpty }
         return connected.contains { $0.id == display.id }
     }
@@ -100,11 +98,12 @@ enum SystemProbe {
         CWWiFiClient.shared().interface()?.ssid()
     }
 
-    static func isRunning(_ apps: [AppRef]) -> Bool {
-        let ids = Set(apps.map(\.bundleID))
-        return NSWorkspace.shared.runningApplications.contains { app in
-            app.bundleIdentifier.map(ids.contains) ?? false
-        }
+    static func runningBundleIDs() -> Set<String> {
+        Set(NSWorkspace.shared.runningApplications.compactMap(\.bundleIdentifier))
+    }
+
+    static func isRunning(_ apps: [AppRef], among running: Set<String> = runningBundleIDs()) -> Bool {
+        apps.contains { running.contains($0.bundleID) }
     }
 
     static func runningRegularApps() -> [AppRef] {

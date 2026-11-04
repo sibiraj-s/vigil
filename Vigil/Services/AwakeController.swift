@@ -181,7 +181,8 @@ final class AwakeController {
             self.session = nil
         }
 
-        let met = prefs.triggers.filter { $0.enabled && isMet($0.condition, now: now) }
+        var snapshot = ProbeSnapshot()
+        let met = prefs.triggers.filter { $0.enabled && isMet($0.condition, now: now, in: &snapshot) }
         var suppressed = suppressedTriggers.filter { now.timeIntervalSince($0.value) < Self.pauseGrace }
         for trigger in met where suppressed[trigger.id] != nil { suppressed[trigger.id] = now }
         if suppressed != suppressedTriggers { suppressedTriggers = suppressed }
@@ -208,13 +209,22 @@ final class AwakeController {
         }
     }
 
-    private func isMet(_ condition: Trigger.Condition, now: Date) -> Bool {
+    /// System state read at most once per evaluation, and only when some trigger needs it.
+    private struct ProbeSnapshot {
+        lazy var runningApps = SystemProbe.runningBundleIDs()
+        lazy var displays = SystemProbe.externalDisplays()
+        lazy var onCharger = SystemProbe.isOnCharger()
+        lazy var drives = SystemProbe.externalDrives()
+        lazy var ssid = SystemProbe.currentSSID()
+    }
+
+    private func isMet(_ condition: Trigger.Condition, now: Date, in snapshot: inout ProbeSnapshot) -> Bool {
         switch condition {
-        case .apps(let apps): SystemProbe.isRunning(apps)
-        case .externalDisplay(let display): SystemProbe.isConnected(display)
-        case .power(let onCharger): SystemProbe.isOnCharger() == onCharger
-        case .drive(let drive): SystemProbe.isMounted(drive)
-        case .wifi(let ssid): !ssid.isEmpty && SystemProbe.currentSSID() == ssid
+        case .apps(let apps): SystemProbe.isRunning(apps, among: snapshot.runningApps)
+        case .externalDisplay(let display): SystemProbe.isConnected(display, among: snapshot.displays)
+        case .power(let onCharger): snapshot.onCharger == onCharger
+        case .drive(let drive): SystemProbe.isMounted(drive, among: snapshot.drives)
+        case .wifi(let ssid): !ssid.isEmpty && snapshot.ssid == ssid
         case .schedule(let schedule): schedule.contains(now)
         }
     }
