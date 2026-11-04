@@ -232,7 +232,8 @@ private struct GeneralPane: View {
                         .disabled(!updater.isEnabled)
                 }
             }
-        }    }
+        }
+    }
 
     /// Called only by the toggle, so reverting the state after a failure doesn't re-run the opposite call.
     private func setLaunchAtLogin(_ enabled: Bool) {
@@ -279,7 +280,8 @@ private struct PowerPane: View {
                     .font(.system(size: 11))
                     .foregroundStyle(Theme.textSecondary)
             }
-        }    }
+        }
+    }
 }
 
 /// The battery guard switch, shown in both the Battery & Power and Triggers panes.
@@ -293,7 +295,8 @@ struct BatteryGuardRow: View {
             subtitle: "End any session when battery drops below \(prefs.batteryGuardThreshold)% and the charger is unplugged."
         ) {
             Toggle("Battery guard", isOn: $prefs.batteryGuardEnabled).labelsHidden()
-        }    }
+        }
+    }
 }
 
 

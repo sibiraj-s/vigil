@@ -58,7 +58,8 @@ struct TriggersPane: View {
                     LocationAccess.shared.requestIfNeeded()
                 }
             }
-        }    }
+        }
+    }
 }
 
 private struct TriggerRow: View {
@@ -201,8 +202,7 @@ private struct TriggerEditor: View {
         switch trigger.condition {
         case .apps(let apps): !apps.isEmpty
         case .wifi(let ssid): !ssid.trimmingCharacters(in: .whitespaces).isEmpty
-        // Equal times would be an empty window that never fires.
-        case .schedule(let schedule): !schedule.weekdays.isEmpty && schedule.start != schedule.end
+        case .schedule(let schedule): schedule.isValid
         default: true
         }
     }

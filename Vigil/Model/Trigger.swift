@@ -87,6 +87,9 @@ struct Trigger: Identifiable, Codable, Hashable {
         var start = 9 * 60
         var end = 18 * 60
 
+        /// Whether this schedule can ever fire: it needs a day, and equal times would be an empty window.
+        var isValid: Bool { !weekdays.isEmpty && start != end }
+
         func contains(_ date: Date, calendar: Calendar = .current) -> Bool {
             let parts = calendar.dateComponents([.weekday, .hour, .minute], from: date)
             guard let weekday = parts.weekday else { return false }
@@ -146,7 +149,8 @@ struct Trigger: Identifiable, Codable, Hashable {
     var shortTitle: String {
         switch condition {
         case .apps(let apps):
-            let running = apps.first { SystemProbe.isRunning([$0]) }
+            let runningIDs = SystemProbe.runningBundleIDs()
+            let running = apps.first { runningIDs.contains($0.bundleID) }
             return "While \(running?.name ?? "an app") is running"
         case .externalDisplay(let display): return "\(display?.name ?? "External display") connected"
         case .power(let onCharger): return onCharger ? "Plugged in" : "On battery"

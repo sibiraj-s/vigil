@@ -38,7 +38,8 @@ struct ShortcutsPane: View {
             Text("Click a shortcut to record new keys. Press Esc to cancel, or ⌫ to clear it.")
                 .font(.system(size: 11))
                 .foregroundStyle(Theme.textSecondary)
-        }    }
+        }
+    }
 
     /// Looks the row up by id. `ForEach($array)` bindings hold an index, which a removed row's
     /// views still read while disappearing, trapping with "Index out of range".

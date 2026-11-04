@@ -45,6 +45,13 @@ struct TriggerTests {
         #expect(schedule.contains(Self.calendar.date(from: DateComponents(year: 2026, month: 11, day: 1, hour: 2))!, calendar: Self.calendar))
     }
 
+    @Test func scheduleNeedsADayAndDistinctTimes() {
+        #expect(Trigger.Schedule(weekdays: [2], start: 9 * 60, end: 18 * 60).isValid)
+        #expect(Trigger.Schedule(weekdays: [2], start: 22 * 60, end: 6 * 60).isValid)
+        #expect(!Trigger.Schedule(weekdays: [], start: 9 * 60, end: 18 * 60).isValid)
+        #expect(!Trigger.Schedule(weekdays: [2], start: 9 * 60, end: 9 * 60).isValid)
+    }
+
     @Test func daysLabelNamesCommonSets() {
         #expect(Trigger.Schedule(weekdays: [2, 3, 4, 5, 6]).daysLabel == "Weekdays")
         #expect(Trigger.Schedule(weekdays: [1, 7]).daysLabel == "Weekends")

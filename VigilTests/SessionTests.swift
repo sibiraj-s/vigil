@@ -125,6 +125,24 @@ struct EndSessionTests {
         #expect(awake.pausedTriggers.isEmpty)
     }
 
+    @Test func changedTriggersApplyWithoutAnExplicitEvaluate() async {
+        defer { cleanUp() }
+        awake.observePreferences()
+        setConditionHolds(false)
+        #expect(await eventually { awake.activeTriggers.isEmpty })
+        setConditionHolds(true)
+        #expect(await eventually { awake.activeTriggers.count == 1 })
+    }
+
+    /// Lets the preference watchers run until `condition` holds, for up to a second.
+    private func eventually(_ condition: () -> Bool) async -> Bool {
+        for _ in 0..<100 {
+            if condition() { return true }
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        return condition()
+    }
+
     @Test func startingASessionUnpausesTriggers() {
         defer { cleanUp() }
         awake.end()

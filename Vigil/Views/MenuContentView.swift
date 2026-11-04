@@ -321,6 +321,7 @@ private struct UntilTimePage: View {
                 .datePickerStyle(.field)
                 .labelsHidden()
             Text(summary).font(.system(size: 11)).foregroundStyle(Theme.textSecondary)
+            BatteryGuardNote()
             Button("Start session") {
                 awake.start(.untilTime, until: time)
                 page = .main
@@ -347,6 +348,7 @@ private struct PickAppPage: View {
 
     var body: some View {
         SubpageHeader(title: "While an app runs", page: $page)
+        BatteryGuardNote().padding(EdgeInsets(top: 0, leading: 11, bottom: 6, trailing: 11))
         ScrollView {
             VStack(spacing: 2) {
                 ForEach(apps) { app in
@@ -363,13 +365,28 @@ private struct PickAppPage: View {
                         }
                     }
                     .buttonStyle(MenuItemStyle())
+                    // Only the rows, so the list still scrolls.
+                    .disabled(awake.batteryGuardTripped)
                 }
             }
         }
-        .disabled(awake.batteryGuardTripped)
         .frame(maxHeight: 320)
         .fixedSize(horizontal: false, vertical: true)
         .onAppear { apps = SystemProbe.runningRegularApps() }
+    }
+}
+
+/// Says why a sub-page can't start a session; the main page's header isn't visible there.
+private struct BatteryGuardNote: View {
+    @Environment(AwakeController.self) private var awake
+
+    var body: some View {
+        if awake.batteryGuardTripped {
+            Text("Battery is below \(awake.prefs.batteryGuardThreshold)%. Plug in to start a session.")
+                .font(.system(size: 11))
+                .foregroundStyle(Theme.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 }
 

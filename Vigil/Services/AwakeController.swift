@@ -179,11 +179,11 @@ final class AwakeController {
             batteryGuardTripped = false
         }
 
-        if let session, batteryGuardTripped || hasEnded(session, now: now) {
+        var snapshot = ProbeSnapshot()
+        if let session, batteryGuardTripped || hasEnded(session, now: now, in: &snapshot) {
             self.session = nil
         }
 
-        var snapshot = ProbeSnapshot()
         let met = prefs.triggers.filter { $0.enabled && isMet($0.condition, now: now, in: &snapshot) }
         var suppressed = suppressedTriggers.filter { now.timeIntervalSince($0.value) < Self.pauseGrace }
         for trigger in met where suppressed[trigger.id] != nil { suppressed[trigger.id] = now }
@@ -199,11 +199,11 @@ final class AwakeController {
         assertion.set(level, reason: "Vigil is keeping your Mac awake")
     }
 
-    private func hasEnded(_ session: ManualSession, now: Date) -> Bool {
+    private func hasEnded(_ session: ManualSession, now: Date, in snapshot: inout ProbeSnapshot) -> Bool {
         if let endDate = session.endDate, now >= endDate { return true }
         switch session.preset {
         case .whileApp:
-            return session.app.map { !SystemProbe.isRunning([$0]) } ?? true
+            return session.app.map { !SystemProbe.isRunning([$0], among: snapshot.runningApps) } ?? true
         case .whileDownloading:
             return !downloads.isBusy(now: now, grace: 120, since: session.started)
         default:
@@ -240,7 +240,8 @@ final class AwakeController {
     // MARK: - System hooks
 
     /// Applies settings as soon as they change, wherever they're changed from.
-    private func observePreferences() {
+    /// Called by `start()`; separate so tests can watch preferences without the rest of the app hooks.
+    func observePreferences() {
         let prefs = prefs
         watch(Observations { _ = (prefs.triggers, prefs.letDisplaySleep, prefs.batteryGuardEnabled, prefs.batteryGuardThreshold) }) {
             $0.evaluate()
@@ -251,8 +252,9 @@ final class AwakeController {
 
     private func watch(_ changes: Observations<Void, Never>, then action: @escaping (AwakeController) -> Void) {
         preferenceWatchers.append(Task { [weak self] in
-            // The first element is the current state, which `start()` has already applied.
-            for await _ in changes.dropFirst() {
+            // The first element is read only once this task runs, so it may already include a change made
+            // after `start()`; applying it again is harmless, while skipping it could lose that change.
+            for await _ in changes {
                 guard let self else { return }
                 action(self)
             }
