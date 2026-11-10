@@ -197,7 +197,7 @@ final class AwakeController {
         for trigger in activeTriggers {
             level = max(level, trigger.keepDisplayOn ? .display : .system)
         }
-        assertion.set(level, reason: "Vigil is keeping your Mac awake")
+        assertion.set(level, reason: "\(AppInfo.name) is keeping your Mac awake")
     }
 
     private func hasEnded(_ session: ManualSession, now: Date, in snapshot: inout ProbeSnapshot) -> Bool {

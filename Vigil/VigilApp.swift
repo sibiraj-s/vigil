@@ -13,6 +13,11 @@ enum Launcher {
     }
 }
 
+/// "Vigil Dev" for a Debug build, so it can be told apart from the installed app.
+nonisolated enum AppInfo {
+    static let name = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as! String
+}
+
 private struct TestHostApp: App {
     var body: some Scene { Settings { EmptyView() } }
 }
@@ -37,7 +42,7 @@ struct VigilApp: App {
         }
         .menuBarExtraStyle(.window)
 
-        Window("Vigil Settings", id: SettingsView.windowID) {
+        Window("\(AppInfo.name) Settings", id: SettingsView.windowID) {
             SettingsView()
                 .environment(awake)
         }

@@ -313,7 +313,7 @@ private struct AboutPane: View {
                 .fill(Theme.accent)
                 .frame(width: 72, height: 72)
                 .overlay { EyeView(glyph: .open, color: .white).frame(width: 44) }
-            Text("Vigil").font(.system(size: 18, weight: .bold))
+            Text(AppInfo.name).font(.system(size: 18, weight: .bold))
             Text("Version \(Self.version)").font(.system(size: 11)).foregroundStyle(Theme.textSecondary)
             Text("Keeps your Mac awake for as long as you need.")
                 .foregroundStyle(Theme.textSecondary)

@@ -107,15 +107,32 @@ enum MenuBarIcon {
         let iconSize = CGSize(width: glyph.viewBox.width * 0.85, height: height)
         let font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
         let textSize = text.map { ($0 as NSString).size(withAttributes: [.font: font]) } ?? .zero
-        let width = ceil(iconSize.width + (text == nil ? 0 : 4 + textSize.width))
+        // Debug builds add a dot at the eye's lower right, so they can be told apart from the
+        // installed app in the menu bar.
+        #if DEBUG
+            let dot: CGFloat = 6
+        #else
+            let dot: CGFloat = 0
+        #endif
+        let iconWidth = iconSize.width + dot / 3
+        let width = ceil(iconWidth + (text == nil ? 0 : 4 + textSize.width))
 
         let image = NSImage(size: NSSize(width: width, height: height), flipped: true) { _ in
             guard let context = NSGraphicsContext.current?.cgContext else { return false }
             let color = glyph == .closed ? NSColor.black : activeColor
             glyph.draw(in: context, rect: CGRect(origin: .zero, size: iconSize), color: color.cgColor)
+            if dot > 0 {
+                // Cut out of the eye with a gap around it, so it stays visible.
+                let spot = CGRect(x: iconWidth - dot, y: height - dot, width: dot, height: dot)
+                context.setBlendMode(.clear)
+                context.fillEllipse(in: spot.insetBy(dx: -1.5, dy: -1.5))
+                context.setBlendMode(.normal)
+                context.setFillColor(color.cgColor)
+                context.fillEllipse(in: spot)
+            }
             if let text {
                 (text as NSString).draw(
-                    at: CGPoint(x: iconSize.width + 4, y: (height - textSize.height) / 2),
+                    at: CGPoint(x: iconWidth + 4, y: (height - textSize.height) / 2),
                     withAttributes: [.font: font, .foregroundColor: color]
                 )
             }
@@ -123,7 +140,7 @@ enum MenuBarIcon {
         }
         // The closed eye follows the menu bar's own color; the open eye keeps its amber.
         image.isTemplate = glyph == .closed
-        image.accessibilityDescription = glyph == .closed ? "Vigil, off" : "Vigil, keeping Mac awake"
+        image.accessibilityDescription = glyph == .closed ? "\(AppInfo.name), off" : "\(AppInfo.name), keeping Mac awake"
         return image
     }
 }

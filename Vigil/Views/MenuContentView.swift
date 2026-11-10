@@ -90,7 +90,7 @@ struct MenuContentView: View {
         Button {
             NSApp.terminate(nil)
         } label: {
-            MenuRowLabel("Quit Vigil") { ShortcutHint("⌘Q") }
+            MenuRowLabel("Quit \(AppInfo.name)") { ShortcutHint("⌘Q") }
         }
         .buttonStyle(MenuItemStyle())
         .keyboardShortcut("q", modifiers: .command)

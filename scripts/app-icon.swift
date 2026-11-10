@@ -3,10 +3,16 @@
 //
 //   swift scripts/app-icon.swift
 //
+// With `dev`, draws the Debug build's icon instead: the same eye on blue, into
+// AppIcon-Dev.appiconset, so it can be told apart from the installed app.
+//
 // The eye's path matches EyeGlyph.open in Vigil/Views/EyeGlyph.swift.
 import AppKit
 
-let output = URL(fileURLWithPath: "Vigil/Assets.xcassets/AppIcon.appiconset", isDirectory: true)
+let isDev = CommandLine.arguments.dropFirst().first == "dev"
+let output = URL(fileURLWithPath: "Vigil/Assets.xcassets/\(isDev ? "AppIcon-Dev" : "AppIcon").appiconset", isDirectory: true)
+/// The tile's gradient, top to bottom.
+let (topColor, bottomColor): (UInt32, UInt32) = isDev ? (0x60A5FA, 0x1D4ED8) : (0xF5A524, 0xB45309)
 
 func rgb(_ hex: UInt32, _ alpha: CGFloat = 1) -> CGColor {
     CGColor(
@@ -24,17 +30,17 @@ func drawIcon(in context: CGContext) {
     // Shadow offsets ignore the flip above, so a negative height still casts downward.
     context.setShadow(offset: CGSize(width: 0, height: -10), blur: 28, color: rgb(0x000000, 0.3))
     context.addPath(shape)
-    context.setFillColor(rgb(0xB45309))
+    context.setFillColor(rgb(bottomColor))
     context.fillPath()
     context.restoreGState()
 
-    // Lighter amber at the top, the accent at the bottom.
+    // Lighter at the top, the accent at the bottom.
     context.saveGState()
     context.addPath(shape)
     context.clip()
     let gradient = CGGradient(
         colorsSpace: CGColorSpace(name: CGColorSpace.sRGB),
-        colors: [rgb(0xF5A524), rgb(0xB45309)] as CFArray, locations: [0, 1])!
+        colors: [rgb(topColor), rgb(bottomColor)] as CFArray, locations: [0, 1])!
     context.drawLinearGradient(gradient, start: CGPoint(x: 512, y: tile.minY), end: CGPoint(x: 512, y: tile.maxY), options: [])
     context.restoreGState()
 
