@@ -3,10 +3,11 @@ import SwiftUI
 @main
 enum Launcher {
     static func main() {
-        // Unit tests run inside the app. Start an empty one for them, so a test run never
-        // holds the Mac awake, registers shortcuts or checks for updates.
+        // Unit tests run inside the app. Start an empty one for them, hidden from the Dock, so a
+        // test run never holds the Mac awake, registers shortcuts or checks for updates.
         if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil || NSClassFromString("XCTestCase") != nil {
-            TestHostApp.main()
+            NSApplication.shared.setActivationPolicy(.prohibited)
+            NSApplication.shared.run()
         } else {
             VigilApp.main()
         }
@@ -16,10 +17,6 @@ enum Launcher {
 /// "Vigil Dev" for a Debug build, so it can be told apart from the installed app.
 nonisolated enum AppInfo {
     static let name = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as! String
-}
-
-private struct TestHostApp: App {
-    var body: some Scene { Settings { EmptyView() } }
 }
 
 struct VigilApp: App {
