@@ -5,16 +5,12 @@ import Testing
 
 /// Each test gets its own defaults domain, so nothing touches the real settings.
 struct PreferencesTests {
-    private let suite = "VigilTests.\(UUID().uuidString)"
-    private let defaults: UserDefaults
-
-    init() {
-        defaults = UserDefaults(suiteName: suite)!
-    }
+    private let store = TestDefaults("Preferences")
+    private var defaults: UserDefaults { store.defaults }
 
     /// Removes this test's defaults domain from disk.
     private func cleanUp() {
-        defaults.removePersistentDomain(forName: suite)
+        store.remove()
     }
 
     @Test func freshInstallGetsDefaults() {

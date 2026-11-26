@@ -38,11 +38,11 @@ struct SessionTests {
 
 /// End and resume behaviour with a trigger that always holds.
 struct EndSessionTests {
-    private let suite = "VigilTests.\(UUID().uuidString)"
+    private let store = TestDefaults("EndSession")
     private let awake: AwakeController
 
     init() {
-        let prefs = Preferences(defaults: UserDefaults(suiteName: suite)!)
+        let prefs = Preferences(defaults: store.defaults)
         prefs.batteryGuardEnabled = false
         var always = Trigger.Schedule()
         always.weekdays = Set(1...7)
@@ -54,7 +54,7 @@ struct EndSessionTests {
     }
 
     private func cleanUp() {
-        UserDefaults().removePersistentDomain(forName: suite)
+        store.remove()
     }
 
     @Test func endingASessionLeavesTriggersRunning() {
